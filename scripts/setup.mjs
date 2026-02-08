@@ -188,7 +188,18 @@ function updateSeedScript() {
   console.log('  seed-sanity.mjs — brand name + copyright year');
 }
 
-// ─── 9. Generate .env ───────────────────────────────
+// ─── 9. CLAUDE.md ──────────────────────────────────
+function updateClaudeMd() {
+  const filePath = path.resolve(root, 'CLAUDE.md');
+  if (!fs.existsSync(filePath)) return;
+  let content = read('CLAUDE.md');
+  content = replaceAll(content, '{clientName}', config.clientName);
+  content = replaceAll(content, '{clientSlug}', config.clientSlug);
+  write('CLAUDE.md', content);
+  console.log('  CLAUDE.md — client name + slug');
+}
+
+// ─── 10. Generate .env ──────────────────────────────
 function generateEnv() {
   const projectId = config.sanityProjectId || 'your_project_id';
   const dataset = config.sanityDataset || 'production';
@@ -219,6 +230,7 @@ updateLayout();
 updateNavbar();
 updateFooter();
 updateSeedScript();
+updateClaudeMd();
 generateEnv();
 
 console.log(`
