@@ -1,0 +1,102 @@
+---
+import Badge from './Badge.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultStats = [
+  {
+    label: 'Processing speed',
+    value: '8\u00d7',
+    description: 'Faster inbox triage across all channels.',
+  },
+  {
+    label: 'Reply efficiency',
+    value: '3.5',
+    unit: 'hrs/day',
+    description: 'Less time writing, more time doing real work.',
+  },
+  {
+    label: 'Tone accuracy',
+    value: '98%',
+    description: 'Replies that sound naturally like you.',
+  },
+];
+
+const badge = data?.statsBadge ?? 'Philosophy';
+const headingLine1 = data?.statsHeadingLine1 ?? 'Made to quiet the noise';
+const headingLine2 = data?.statsHeadingLine2 ?? 'We help you focus.';
+const mission = data?.statsMission ?? 'Our mission is to create technology that feels calm, intentional, and human — blending thoughtful design with quiet intelligence to help you stay focused on what truly matters.';
+const bgImage = data?.statsBackgroundImage
+  ? urlFor(data.statsBackgroundImage).width(1920).format('webp').quality(80).url()
+  : '/assets/alessio-soggetti-gdE-5Oui1Y0-unsplash.webp';
+const stats = data?.statsCards ?? defaultStats;
+---
+
+<section id="philosophy" class="py-20 md:py-28 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Outer gradient container -->
+    <div class="stats-outer relative rounded-3xl border border-white/[0.08] p-8 md:p-12 lg:p-16 overflow-hidden">
+      <!-- Blurred background image -->
+      <img
+        src={bgImage}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover blur-[50px] scale-125"
+        loading="lazy"
+      />
+      <div class="stats-overlay absolute inset-0"></div>
+      <!-- Badge -->
+      <div class="relative z-10 mb-8">
+        <Badge text={badge} />
+      </div>
+
+      <!-- Header row: heading left, mission right -->
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-[4fr_2fr] gap-8 lg:gap-0 mb-12">
+        <div>
+          <p class="text-3xl sm:text-4xl md:text-5xl font-serif italic text-white/60 leading-tight mb-1">{headingLine1}</p>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-normal text-white leading-tight">
+            {headingLine2}
+          </h2>
+        </div>
+        <div class="flex items-start lg:items-start lg:justify-end">
+          <p class="text-neutral-300 leading-relaxed text-sm max-w-sm">
+            {mission}
+          </p>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {stats.map((stat: any) => (
+          <div class="stats-card relative rounded-2xl border border-white/[0.08] p-6 md:p-8">
+            <div class="relative z-10">
+              <p class="text-base text-white/90 mb-6">{stat.label}</p>
+              <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-5xl md:text-6xl font-light text-white">{stat.value}</span>
+                {stat.unit && <span class="text-base text-white/70">{stat.unit}</span>}
+              </div>
+              <p class="text-sm text-white/70 leading-relaxed">{stat.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stats-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(14, 14, 14, 0.92) 0%,
+      rgba(14, 14, 14, 0.65) 35%,
+      rgba(14, 14, 14, 0.35) 65%,
+      rgba(14, 14, 14, 0.10) 100%
+    );
+  }
+
+</style>

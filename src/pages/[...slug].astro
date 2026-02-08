@@ -1,0 +1,26 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import SectionRenderer from '../components/SectionRenderer.astro';
+import { client } from '../lib/sanity';
+import { ALL_PAGES_QUERY, PAGE_BY_SLUG_QUERY } from '../lib/queries';
+
+export async function getStaticPaths() {
+  const pages = await client.fetch(ALL_PAGES_QUERY);
+  return pages.map((p: any) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const { page, site } = await client.fetch(PAGE_BY_SLUG_QUERY, { slug });
+---
+
+<Layout title={page?.metaTitle ?? page?.title} description={page?.metaDescription}>
+  <Navbar data={site} />
+  <main>
+    <SectionRenderer sections={page?.sections} />
+  </main>
+  <Footer data={site} />
+</Layout>

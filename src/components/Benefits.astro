@@ -1,0 +1,340 @@
+---
+import Badge from './Badge.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultItems = [
+  {
+    title: 'Save time effortlessly',
+    content: 'Focus on what truly matters. We handle the heavy lifting so you can stay ahead without the extra effort.',
+    image: '/assets/paul-earle-wVjd0eWNqI8-unsplash.webp',
+  },
+  {
+    title: 'Stay clear and focused',
+    content: 'Cut through the noise with smart prioritization that surfaces what matters most.',
+    image: '/assets/alessio-soggetti-gdE-5Oui1Y0-unsplash.webp',
+  },
+  {
+    title: 'Communicate with ease',
+    content: 'Generate thoughtful replies in seconds that match your tone and style.',
+    image: '/assets/michal-parzuchowski-EFvP9cHipMQ-unsplash.webp',
+  },
+  {
+    title: 'Work across channels',
+    content: 'Connect all your tools into one unified experience. Manage everything from a single dashboard.',
+    image: '/assets/konstantin-kleine-V1NVvXmO_dk-unsplash.webp',
+  },
+];
+
+const badge = data?.benefitsBadge ?? 'Benefits';
+const heading = data?.benefitsHeading ?? 'Why choose us?';
+const subheading = data?.benefitsSubheading ?? 'Designed for clarity and calm';
+const benefitItems = data?.benefitsItems
+  ? data.benefitsItems.map((item: any) => ({
+      title: item.title,
+      content: item.content,
+      image: urlFor(item.image).width(1920).format('webp').quality(80).url(),
+    }))
+  : defaultItems;
+---
+
+<section id="benefits" class="py-20 md:py-28 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Centered heading -->
+    <div class="text-center mb-16">
+      <div class="mb-6">
+        <Badge text={badge} />
+      </div>
+
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-normal text-white mb-2">
+        {heading}
+      </h2>
+      <p class="text-3xl sm:text-4xl md:text-5xl font-serif italic text-white/60">
+        {subheading}
+      </p>
+    </div>
+
+    <!-- Two-column layout: stepper left, dynamic image right -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+      <!-- Left: Vertical Stepper -->
+      <div class="order-2 lg:order-1">
+        <div class="benefit-stepper">
+          {benefitItems.map((item: any, index: number) => (
+            <div
+              class:list={['benefit-step', index === 0 ? 'active' : '']}
+              data-index={index}
+            >
+              <div class="step-line">
+                <div class="step-line-fill"></div>
+              </div>
+              <div class="step-content">
+                <h3 class="step-title">{item.title}</h3>
+                <div class="step-description">
+                  <p>{item.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right: Dynamic image that changes with active step -->
+      <div class="relative lg:sticky lg:top-32 order-1 lg:order-2">
+        <div class="benefit-image-container rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 aspect-[4/3]">
+          {benefitItems.map((item: any, index: number) => (
+            <img
+              src={item.image}
+              alt={item.title}
+              class:list={[
+                'benefit-image',
+                index === 0 ? 'active' : '',
+              ]}
+              data-image-index={index}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          ))}
+        </div>
+        <!-- Mobile dot indicators -->
+        <div class="flex items-center justify-center gap-2 mt-4 lg:hidden">
+          {benefitItems.map((_: any, index: number) => (
+            <button
+              class:list={['benefit-dot', index === 0 ? 'active' : '']}
+              data-benefit-dot={index}
+              aria-label={`Go to benefit ${index + 1}`}
+            >
+              <div class="benefit-dot-fill"></div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .benefit-step {
+    display: flex;
+    gap: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+
+  .step-line {
+    position: relative;
+    width: 2px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.08);
+    align-self: stretch;
+  }
+
+  .step-line-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: white;
+  }
+
+  .benefit-step.active .step-line-fill {
+    animation: fill-line 4s linear forwards;
+  }
+
+  @keyframes fill-line {
+    from { height: 0%; }
+    to { height: 100%; }
+  }
+
+  .step-content {
+    padding: 0.25rem 0;
+  }
+
+  .step-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.3s ease;
+    margin: 0;
+  }
+
+  .benefit-step.active .step-title {
+    color: white;
+  }
+
+  .benefit-step:not(.active):hover .step-title {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .step-description {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.4s ease, opacity 0.3s ease;
+  }
+
+  .step-description > p {
+    overflow: hidden;
+    font-size: 0.9375rem;
+    color: #a3a3a3;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .benefit-step.active .step-description {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .benefit-step.active .step-description > p {
+    padding-top: 0.625rem;
+  }
+
+  .benefit-image-container {
+    position: relative;
+    background: #161616;
+  }
+
+  .benefit-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .benefit-image.active {
+    opacity: 1;
+  }
+
+  .benefit-dot {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    width: 12px;
+    transition: width 0.3s ease;
+    padding: 0;
+    border: none;
+  }
+
+  .benefit-dot.active {
+    width: 56px;
+  }
+
+  .benefit-dot-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+    border-radius: 2px;
+  }
+
+  .benefit-dot.active .benefit-dot-fill {
+    animation: benefit-dot-fill 4s linear forwards;
+  }
+
+  @keyframes benefit-dot-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+</style>
+
+<script>
+  const stepper = document.querySelector('.benefit-stepper');
+  if (stepper) {
+    const section = stepper.closest('section')!;
+    const steps = Array.from(stepper.querySelectorAll('.benefit-step'));
+    const images = Array.from(section.querySelectorAll('.benefit-image'));
+    const dots = Array.from(section.querySelectorAll('.benefit-dot'));
+    const isDesktop = window.matchMedia('(min-width: 1024px)');
+    let current = 0;
+    let fallback: ReturnType<typeof setTimeout>;
+    let started = false;
+
+    function advance() {
+      clearTimeout(fallback);
+      if (!started) return;
+      if (isDesktop.matches) {
+        activate((current + 1) % steps.length);
+      }
+    }
+
+    function activate(index: number) {
+      clearTimeout(fallback);
+
+      steps.forEach((s) => {
+        s.classList.remove('active');
+        const fill = s.querySelector('.step-line-fill') as HTMLElement;
+        fill.style.animation = 'none';
+      });
+
+      images.forEach((img) => img.classList.remove('active'));
+
+      dots.forEach((dot) => {
+        dot.classList.remove('active');
+        const fill = dot.querySelector('.benefit-dot-fill') as HTMLElement;
+        fill.style.animation = 'none';
+      });
+
+      current = index;
+      const step = steps[current];
+      const fill = step.querySelector('.step-line-fill') as HTMLElement;
+      void fill.offsetHeight;
+      fill.style.animation = '';
+      step.classList.add('active');
+
+      if (images[current]) {
+        images[current].classList.add('active');
+      }
+
+      if (dots[current]) {
+        const dotFill = dots[current].querySelector('.benefit-dot-fill') as HTMLElement;
+        void dotFill.offsetHeight;
+        dotFill.style.animation = '';
+        dots[current].classList.add('active');
+      }
+
+      // Schedule fallback in case animationend doesn't fire
+      if (isDesktop.matches) {
+        fallback = setTimeout(advance, 4200);
+      }
+    }
+
+    // Primary auto-advance: triggered by CSS animation completing
+    steps.forEach((step) => {
+      const fill = step.querySelector('.step-line-fill') as HTMLElement;
+      fill.addEventListener('animationend', () => {
+        advance();
+      });
+    });
+
+    steps.forEach((step, i) => {
+      step.addEventListener('click', () => {
+        activate(i);
+      });
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        activate(i);
+      });
+    });
+
+    // Only start auto-advance when the section is visible
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        started = true;
+        activate(0);
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    observer.observe(section);
+  }
+</script>

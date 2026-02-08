@@ -1,0 +1,82 @@
+---
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultNavLinks = [
+  { label: 'Benefits', href: '#benefits' },
+  { label: 'Features', href: '#features' },
+  { label: 'How it works', href: '#how-it-works' },
+  { label: 'Testimonials', href: '#testimonials' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+const navLinks = data?.navLinks ?? defaultNavLinks;
+const ctaLabel = data?.navCtaLabel ?? 'Get started';
+const ctaHref = data?.navCtaHref ?? '#';
+---
+
+<div class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
+  <nav class="max-w-6xl mx-auto rounded-2xl bg-[#0E0E0E]/10 backdrop-blur-2xl border border-white/[0.08]">
+    <div class="px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14">
+        <!-- Left: Logo + Nav links (desktop) -->
+        <div class="flex items-center gap-8">
+          <a href="/" class="flex items-center gap-2 shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-white">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-lg font-semibold text-white">Company</span>
+          </a>
+          <div class="hidden lg:flex items-center gap-6">
+            {navLinks.map((link: any) => (
+              <a href={link.href} class="text-sm text-white/70 hover:text-white transition-colors">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button
+          id="menu-toggle"
+          class="lg:hidden flex flex-col gap-1.5 p-2"
+          aria-label="Toggle menu"
+        >
+          <span class="block w-5 h-0.5 bg-neutral-400 transition-all" id="bar1"></span>
+          <span class="block w-5 h-0.5 bg-neutral-400 transition-all" id="bar2"></span>
+          <span class="block w-5 h-0.5 bg-neutral-400 transition-all" id="bar3"></span>
+        </button>
+
+        <!-- Right: CTA -->
+        <div class="hidden lg:flex items-center">
+          <a href={ctaHref} class="px-6 py-2.5 text-sm font-medium text-navy-950 bg-white rounded-full hover:bg-neutral-100 transition-all duration-200 shadow-lg shadow-white/10 cursor-pointer">
+            {ctaLabel}
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden lg:hidden pb-4">
+        <div class="flex flex-col gap-2 pt-2 border-t border-white/[0.08]">
+          {navLinks.map((link: any) => (
+            <a href={link.href} class="text-sm text-white/70 hover:text-white transition-colors py-2">
+              {link.label}
+            </a>
+          ))}
+          <a href={ctaHref} class="mt-2 px-6 py-2.5 text-sm font-medium text-navy-950 bg-white rounded-full hover:bg-neutral-100 transition-all duration-200 text-center">
+            {ctaLabel}
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<script>
+  document.getElementById('menu-toggle')?.addEventListener('click', () => {
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
+  });
+</script>

@@ -1,0 +1,36 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import LogoStrip from '../components/LogoStrip.astro';
+import Benefits from '../components/Benefits.astro';
+import FeatureCards from '../components/FeatureCards.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Stats from '../components/Stats.astro';
+import Testimonial from '../components/Testimonial.astro';
+import FAQ from '../components/FAQ.astro';
+import FinalCTA from '../components/FinalCTA.astro';
+import Footer from '../components/Footer.astro';
+import { client } from '../lib/sanity';
+import { LANDING_PAGE_QUERY } from '../lib/queries';
+
+const page = await client.fetch(LANDING_PAGE_QUERY);
+---
+
+<Layout title={page?.metaTitle} description={page?.metaDescription}>
+  <Navbar data={page} />
+  <main>
+    <Hero data={page} />
+    <LogoStrip data={page} />
+    <Benefits data={page} />
+    <FeatureCards data={page} />
+    <HowItWorks data={page} />
+    <Stats data={page} />
+    <Testimonial data={page} />
+    <FAQ data={page} />
+    <FinalCTA data={page} />
+  </main>
+  <Footer data={page} />
+</Layout>

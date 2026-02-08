@@ -1,0 +1,118 @@
+---
+import Hero from './Hero.astro';
+import LogoStrip from './LogoStrip.astro';
+import Benefits from './Benefits.astro';
+import FeatureCards from './FeatureCards.astro';
+import HowItWorks from './HowItWorks.astro';
+import Stats from './Stats.astro';
+import Testimonial from './Testimonial.astro';
+import FAQ from './FAQ.astro';
+import FinalCTA from './FinalCTA.astro';
+
+interface Props {
+  sections?: any[];
+}
+
+const { sections = [] } = Astro.props;
+
+// Mappers transform block data into the prefixed format each component expects.
+// This avoids changing any existing component.
+
+function mapHero(s: any) {
+  return {
+    heroBadge: s.badge,
+    heroHeading: s.heading,
+    heroDescription: s.description,
+    heroBackgroundImage: s.backgroundImage,
+    heroCtaLabel: s.ctaLabel,
+    heroCtaHref: s.ctaHref,
+  };
+}
+
+function mapLogoStrip(s: any) {
+  return {
+    logoStripHeading: s.heading,
+    logoStripLogos: s.logos,
+  };
+}
+
+function mapBenefits(s: any) {
+  return {
+    benefitsBadge: s.badge,
+    benefitsHeading: s.heading,
+    benefitsSubheading: s.subheading,
+    benefitsItems: s.items,
+  };
+}
+
+function mapFeatures(s: any) {
+  return {
+    featuresBadge: s.badge,
+    featuresHeadingLine1: s.headingLine1,
+    featuresHeadingLine2: s.headingLine2,
+    featuresCards: s.cards,
+  };
+}
+
+function mapHowItWorks(s: any) {
+  return {
+    howItWorksBadge: s.badge,
+    howItWorksHeading: s.heading,
+    howItWorksSteps: s.steps,
+  };
+}
+
+function mapStats(s: any) {
+  return {
+    statsBadge: s.badge,
+    statsHeadingLine1: s.headingLine1,
+    statsHeadingLine2: s.headingLine2,
+    statsMission: s.mission,
+    statsBackgroundImage: s.backgroundImage,
+    statsCards: s.stats,
+  };
+}
+
+function mapTestimonial(s: any) {
+  return {
+    testimonialBadge: s.badge,
+    testimonialQuote: s.quote,
+    testimonialAuthorName: s.authorName,
+    testimonialAuthorRole: s.authorRole,
+    testimonialAvatars: s.avatars,
+    testimonialBackgroundImage: s.backgroundImage,
+  };
+}
+
+function mapFaq(s: any) {
+  return {
+    faqBadge: s.badge,
+    faqHeading: s.heading,
+    faqSubheading: s.subheading,
+    faqItems: s.items,
+  };
+}
+
+function mapCta(s: any) {
+  return {
+    ctaHeading: s.heading,
+    ctaDescription: s.description,
+    ctaButtonLabel: s.ctaLabel,
+    ctaButtonHref: s.ctaHref,
+    ctaBackgroundImage: s.backgroundImage,
+  };
+}
+---
+
+{sections.map((section: any) => {
+  if (section._type === 'heroBlock') return <Hero data={mapHero(section)} />;
+  if (section._type === 'logoStripBlock') return <LogoStrip data={mapLogoStrip(section)} />;
+  if (section._type === 'benefitsBlock') return <Benefits data={mapBenefits(section)} />;
+  if (section._type === 'featuresBlock') return <FeatureCards data={mapFeatures(section)} />;
+  if (section._type === 'howItWorksBlock') return <HowItWorks data={mapHowItWorks(section)} />;
+  if (section._type === 'statsBlock') return <Stats data={mapStats(section)} />;
+  if (section._type === 'testimonialBlock') return <Testimonial data={mapTestimonial(section)} />;
+  if (section._type === 'faqBlock') return <FAQ data={mapFaq(section)} />;
+  if (section._type === 'ctaBlock') return <FinalCTA data={mapCta(section)} />;
+  return null;
+})}

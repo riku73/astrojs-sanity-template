@@ -1,0 +1,74 @@
+---
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultLogos = [
+  { name: 'Gmail', src: '/assets/logos/gmail.svg' },
+  { name: 'Slack', src: '/assets/logos/slack.svg' },
+  { name: 'Notion', src: '/assets/logos/notion.svg' },
+  { name: 'Linear', src: '/assets/logos/linear.svg' },
+  { name: 'Asana', src: '/assets/logos/asana.svg' },
+  { name: 'Outlook', src: '/assets/logos/outlook.svg' },
+];
+
+const heading = data?.logoStripHeading ?? 'Seamlessly connect with your favorite tools';
+const logos = data?.logoStripLogos
+  ? data.logoStripLogos.map((item: any) => ({
+      name: item.name,
+      src: urlFor(item.logo).url(),
+    }))
+  : defaultLogos;
+---
+
+<section class="relative z-10 bg-navy-950/80 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <p class="text-center text-sm text-white mb-8 tracking-wide">
+      {heading}
+    </p>
+
+    <!-- Sliding container -->
+    <div class="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <div class="logo-track flex w-max">
+        <!-- First set -->
+        <div class="flex items-center shrink-0">
+          {logos.map((logo: any) => (
+            <div class="flex items-center gap-3 shrink-0 px-8">
+              <img src={logo.src} alt={logo.name} class="h-8 w-auto shrink-0 grayscale opacity-50" />
+              <span class="text-lg font-medium text-neutral-400 whitespace-nowrap">{logo.name}</span>
+            </div>
+          ))}
+        </div>
+        <!-- Duplicate set -->
+        <div class="flex items-center shrink-0">
+          {logos.map((logo: any) => (
+            <div class="flex items-center gap-3 shrink-0 px-8">
+              <img src={logo.src} alt={logo.name} class="h-8 w-auto shrink-0 grayscale opacity-50" />
+              <span class="text-lg font-medium text-neutral-400 whitespace-nowrap">{logo.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes slide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .logo-track {
+    animation: slide 25s linear infinite;
+    will-change: transform;
+  }
+</style>

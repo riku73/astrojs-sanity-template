@@ -1,0 +1,54 @@
+---
+import Badge from './Badge.astro';
+import Button from './Button.astro';
+import StyledHeading from './StyledHeading.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const badge = data?.heroBadge ?? 'Introducing a new era';
+const heading = data?.heroHeading ?? 'Your intelligent *copilot* for every message';
+const description = data?.heroDescription ?? 'Discover how we can help you work smarter, not harder.';
+const ctaLabel = data?.heroCtaLabel ?? 'Get Started';
+const ctaHref = data?.heroCtaHref ?? '#';
+const bgImage = data?.heroBackgroundImage
+  ? urlFor(data.heroBackgroundImage).width(1920).format('webp').quality(80).url()
+  : '/assets/alessio-soggetti-gdE-5Oui1Y0-unsplash.webp';
+---
+
+<section class="relative min-h-[90vh] flex flex-col items-center justify-center text-center overflow-hidden">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0">
+    <img
+      src={bgImage}
+      alt=""
+      class="w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-navy-950/30 to-navy-950"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+    <div class="mb-6">
+      <Badge text={badge} class="!bg-black/20 !border-white/20 !text-white backdrop-blur-md" />
+    </div>
+
+    <StyledHeading
+      text={heading}
+      tag="h1"
+      class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-white leading-tight tracking-tight mb-6 [&>em]:text-white/60"
+    />
+
+    <p class="text-lg sm:text-xl text-neutral-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+      {description}
+    </p>
+
+    <Button label={ctaLabel} href={ctaHref} size="lg" />
+  </div>
+</section>

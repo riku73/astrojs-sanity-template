@@ -1,0 +1,85 @@
+---
+import Badge from './Badge.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultAvatars = [
+  { image: '/assets/michal-parzuchowski-EFvP9cHipMQ-unsplash.webp' },
+  { image: '/assets/daniel-leone-g30P1zcOzXo-unsplash.webp' },
+  { image: '/assets/paul-earle-wVjd0eWNqI8-unsplash.webp' },
+  { image: '/assets/alessio-soggetti-gdE-5Oui1Y0-unsplash.webp' },
+  { image: '/assets/konstantin-kleine-V1NVvXmO_dk-unsplash.webp' },
+  { image: '/assets/wijnand-boerma-CdX_HD9EO_g-unsplash.webp' },
+];
+
+const badge = data?.testimonialBadge ?? 'Testimonials';
+const quote = data?.testimonialQuote ?? 'This product has completely changed how I work. Tasks that used to drain my time are now simple and effortless. For the first time in years, everything feels manageable.';
+const authorName = data?.testimonialAuthorName ?? 'Joanna Smith';
+const authorRole = data?.testimonialAuthorRole ?? 'Project Manager';
+const bgImage = data?.testimonialBackgroundImage
+  ? urlFor(data.testimonialBackgroundImage).width(1920).format('webp').quality(80).url()
+  : '/assets/alessio-soggetti-zxcBR3zNc7I-unsplash.webp';
+const avatars = data?.testimonialAvatars
+  ? data.testimonialAvatars.map((a: any) => ({
+      image: urlFor(a.image).width(96).height(96).format('webp').url(),
+    }))
+  : defaultAvatars;
+---
+
+<section id="testimonials" class="relative py-20 md:py-28 lg:py-32 overflow-hidden">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0">
+    <img
+      src={bgImage}
+      alt=""
+      class="w-full h-full object-cover"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-navy-950/60"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-navy-950 via-transparent to-navy-950"></div>
+  </div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Badge -->
+    <div class="mb-8">
+      <Badge text={badge} />
+    </div>
+
+    <!-- Avatars -->
+    <div class="flex items-center justify-center mb-10">
+      {avatars.map((avatar: any, index: number) => (
+        <div
+          class:list={[
+            'w-12 h-12 rounded-full border-2 border-navy-950 overflow-hidden grayscale',
+            index > 0 ? '-ml-3' : '',
+          ]}
+        >
+          <img
+            src={avatar.image}
+            alt=""
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Quote -->
+    <blockquote class="mb-8">
+      <p class="text-lg sm:text-xl md:text-2xl text-neutral-300 leading-relaxed font-light">
+        {quote}
+      </p>
+    </blockquote>
+
+    <!-- Attribution -->
+    <div>
+      <p class="text-white font-normal">{authorName}</p>
+      <p class="text-sm text-neutral-500">{authorRole}</p>
+    </div>
+  </div>
+</section>

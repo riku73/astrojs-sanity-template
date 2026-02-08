@@ -1,0 +1,20 @@
+---
+interface Props {
+  text: string;
+  tag?: 'h1' | 'h2' | 'h3' | 'h4';
+  class?: string;
+}
+
+const { text, tag: Tag = 'h2', class: className = '' } = Astro.props;
+
+// Parse *italic* markers into HTML spans with serif font
+const parts = text.split(/(\*[^*]+\*)/g);
+---
+
+<Tag class={className}>
+  {parts.map((part) =>
+    part.startsWith('*') && part.endsWith('*')
+      ? <em class="font-serif italic">{part.slice(1, -1)}</em>
+      : part
+  )}
+</Tag>

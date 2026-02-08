@@ -1,0 +1,260 @@
+---
+import Badge from './Badge.astro';
+import StyledHeading from './StyledHeading.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const defaultSteps = [
+  {
+    number: '01',
+    title: 'Connect your inbox',
+    description: 'Quickly and securely connect your accounts — integrates smoothly into your existing workflow.',
+    image: '/assets/michal-parzuchowski-EFvP9cHipMQ-unsplash.webp',
+  },
+  {
+    number: '02',
+    title: 'AI analyzes your messages',
+    description: 'AI reads and understands the context of every conversation, categorizing by priority, urgency, and required action.',
+    image: '/assets/daniel-leone-g30P1zcOzXo-unsplash.webp',
+  },
+  {
+    number: '03',
+    title: 'Take action with clarity',
+    description: 'Review smart summaries, use suggested replies, and manage your inbox with confidence. Stay on top of everything without the overwhelm.',
+    image: '/assets/paul-earle-wVjd0eWNqI8-unsplash.webp',
+  },
+  {
+    number: '04',
+    title: 'Learn and adapt over time',
+    description: 'Continuously learns your style and preferences, getting smarter with every interaction to deliver increasingly personalized results.',
+    image: '/assets/alessio-soggetti-gdE-5Oui1Y0-unsplash.webp',
+  },
+];
+
+const badge = data?.howItWorksBadge ?? 'How it works';
+const heading = data?.howItWorksHeading ?? 'How it *works*';
+const steps = data?.howItWorksSteps
+  ? data.howItWorksSteps.map((step: any, i: number) => ({
+      number: String(i + 1).padStart(2, '0'),
+      title: step.title,
+      description: step.description,
+      image: urlFor(step.image).width(1920).format('webp').quality(80).url(),
+    }))
+  : defaultSteps;
+
+const totalSteps = String(steps.length).padStart(2, '0');
+---
+
+<section id="how-it-works" class="hiw-section py-20 md:py-28 lg:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Heading -->
+    <div class="text-center mb-16">
+      <div class="mb-6">
+        <Badge text={badge} />
+      </div>
+      <StyledHeading
+        text={heading}
+        tag="h2"
+        class="text-3xl sm:text-4xl md:text-5xl font-normal text-white [&>em]:text-white/60"
+      />
+    </div>
+
+    <!-- 3-column layout: step info | image | description -->
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-8 lg:gap-10 items-end">
+      <!-- Left: counter, title, description (mobile), progress -->
+      <div class="order-2 lg:order-1">
+        <div class="flex items-baseline gap-1 mb-3">
+          <span class="hiw-number text-4xl md:text-5xl font-serif italic text-white" data-hiw-number style="transition: opacity 0.3s ease">{steps[0].number}</span>
+          <span class="text-sm text-neutral-500">/{totalSteps}</span>
+        </div>
+        <h3 class="hiw-title text-xl md:text-2xl font-normal text-white mb-4 lg:mb-8" data-hiw-title style="transition: opacity 0.3s ease">{steps[0].title}</h3>
+
+        <!-- Description shown inline on mobile, hidden on desktop -->
+        <p class="hiw-description text-neutral-400 leading-relaxed text-sm mb-6 lg:hidden" data-hiw-description-mobile style="transition: opacity 0.3s ease">{steps[0].description}</p>
+
+        <!-- Progress bar + dots -->
+        <div class="flex items-center gap-2">
+          {steps.map((_: any, index: number) => (
+            <div
+              class:list={['hiw-dot', index === 0 ? 'active' : '']}
+              data-hiw-dot={index}
+            >
+              <div class="hiw-dot-fill"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Center: Large image -->
+      <div class="order-1 lg:order-2">
+        <div class="hiw-image-container rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 aspect-[4/3]">
+          {steps.map((step: any, index: number) => (
+            <img
+              src={step.image}
+              alt={step.title}
+              class:list={['hiw-image', index === 0 ? 'active' : '']}
+              data-hiw-image={index}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          ))}
+        </div>
+      </div>
+
+      <!-- Right: description (desktop only) -->
+      <div class="order-3 hidden lg:block">
+        <p class="hiw-description text-neutral-400 leading-relaxed text-sm" data-hiw-description style="transition: opacity 0.3s ease">{steps[0].description}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Embed steps data for client-side JS -->
+<script type="application/json" id="hiw-steps-data" set:html={JSON.stringify(steps.map((s: any) => ({ number: s.number, title: s.title, description: s.description })))} />
+
+<style>
+  /* Image crossfade */
+  .hiw-image-container {
+    position: relative;
+    background: #161616;
+  }
+
+  .hiw-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .hiw-image.active {
+    opacity: 1;
+  }
+
+  /* Progress dots / bar */
+  .hiw-dot {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    width: 12px;
+    transition: width 0.3s ease;
+  }
+
+  .hiw-dot.active {
+    width: 56px;
+  }
+
+  .hiw-dot-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+    border-radius: 2px;
+  }
+
+  .hiw-dot.active .hiw-dot-fill {
+    animation: hiw-fill 4s linear forwards;
+  }
+
+  @keyframes hiw-fill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+</style>
+
+<script>
+  const section = document.querySelector('.hiw-section');
+  if (section) {
+    const images = Array.from(section.querySelectorAll('.hiw-image'));
+    const dots = Array.from(section.querySelectorAll('.hiw-dot'));
+    const numberEl = section.querySelector('[data-hiw-number]') as HTMLElement;
+    const titleEl = section.querySelector('[data-hiw-title]') as HTMLElement;
+    const descEl = section.querySelector('[data-hiw-description]') as HTMLElement;
+    const descMobileEl = section.querySelector('[data-hiw-description-mobile]') as HTMLElement;
+    const isDesktop = window.matchMedia('(min-width: 1024px)');
+    let current = 0;
+    let fallback: ReturnType<typeof setTimeout>;
+    let started = false;
+
+    const stepsData = JSON.parse(document.getElementById('hiw-steps-data')?.textContent || '[]');
+
+    function advance() {
+      clearTimeout(fallback);
+      if (!started) return;
+      if (isDesktop.matches) {
+        activate((current + 1) % stepsData.length);
+      }
+    }
+
+    function activate(index: number, skipText = false) {
+      clearTimeout(fallback);
+
+      images.forEach(img => img.classList.remove('active'));
+      images[index]?.classList.add('active');
+
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+        const fill = dot.querySelector('.hiw-dot-fill') as HTMLElement;
+        fill.style.animation = 'none';
+      });
+
+      current = index;
+      const activeDot = dots[current];
+      const fill = activeDot.querySelector('.hiw-dot-fill') as HTMLElement;
+      void fill.offsetHeight;
+      fill.style.animation = '';
+      activeDot.classList.add('active');
+
+      // Schedule fallback in case animationend doesn't fire
+      if (isDesktop.matches) {
+        fallback = setTimeout(advance, 4200);
+      }
+
+      if (!skipText) {
+        // Fade out text, swap, fade in
+        const textEls = [numberEl, titleEl, descEl, descMobileEl].filter(Boolean);
+        textEls.forEach(el => el.style.opacity = '0');
+        setTimeout(() => {
+          if (numberEl) numberEl.textContent = stepsData[current].number;
+          if (titleEl) titleEl.textContent = stepsData[current].title;
+          if (descEl) descEl.textContent = stepsData[current].description;
+          if (descMobileEl) descMobileEl.textContent = stepsData[current].description;
+          textEls.forEach(el => el.style.opacity = '1');
+        }, 300);
+      }
+    }
+
+    // Primary auto-advance: triggered by CSS animation completing
+    dots.forEach((dot) => {
+      const fill = dot.querySelector('.hiw-dot-fill') as HTMLElement;
+      fill.addEventListener('animationend', () => {
+        advance();
+      });
+    });
+
+    // Manual dot navigation
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        activate(i);
+      });
+    });
+
+    // Only start auto-advance when the section is visible
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        started = true;
+        activate(0);
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    observer.observe(section);
+  }
+</script>

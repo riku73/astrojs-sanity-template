@@ -1,0 +1,48 @@
+---
+import StyledHeading from './StyledHeading.astro';
+import Button from './Button.astro';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  data?: any;
+}
+
+const { data } = Astro.props;
+
+const heading = data?.ctaHeading ?? 'Inbox zero, *reimagined*';
+const description = data?.ctaDescription ?? 'Join thousands who have transformed their workflow. Start today and experience the difference.';
+const ctaLabel = data?.ctaButtonLabel ?? 'Get early access';
+const ctaHref = data?.ctaButtonHref ?? '#';
+const bgImage = data?.ctaBackgroundImage
+  ? urlFor(data.ctaBackgroundImage).width(1920).format('webp').quality(80).url()
+  : '/assets/daniel-leone-g30P1zcOzXo-unsplash.webp';
+---
+
+<section class="relative py-32 md:py-40 overflow-hidden">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0">
+    <img
+      src={bgImage}
+      alt=""
+      class="w-full h-full object-cover"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-navy-950/30"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-navy-950"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <StyledHeading
+      text={heading}
+      tag="h2"
+      class="text-4xl sm:text-5xl md:text-6xl font-normal text-white mb-6 [&>em]:text-white/60"
+    />
+
+    <p class="text-lg text-neutral-300 max-w-xl mx-auto mb-10 leading-relaxed">
+      {description}
+    </p>
+
+    <Button label={ctaLabel} href={ctaHref} size="lg" />
+  </div>
+</section>
